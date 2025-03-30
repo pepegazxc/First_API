@@ -1,6 +1,6 @@
 package org.example.firstapi;
 
-import org.springframework.data.relational.core.sql.In;
+// Создаем класс, чтобы мы могли принимать запросы юзера через методы get
 
 public class UserRequest {
     private Integer id;

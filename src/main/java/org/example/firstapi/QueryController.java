@@ -7,20 +7,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+@RestController //Помечаем что этот класс является контроллером
 @RequestMapping("/api") // Группировка запросов в /api
 public class QueryController {
 
-    private final JdbcTemplate jdbcTemplate; //Константа для подключение к БД
+    private final JdbcTemplate jdbcTemplate; //Константа для подключения к БД
 
-    @Autowired
+    @Autowired //Внедряем зависимость в класс
     public QueryController(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @PostMapping("/addUser")
-    public String addUser(@RequestBody UserRequest userRequest) {
+    @PostMapping("/addUser") //Помечаем что этот метод будет использован для Post'a для таблицы Users и группируем это в /addUser
+    public String addUser(@RequestBody UserRequest userRequest) { //@RequestBody позволяет переформатировать формат json в формат который принимает метод
+
         String sql = "INSERT INTO users (id, name, surname, email, phone, birthd) VALUES (?, ?, ?, ?, ?, ?)";
+        //Вызываем метод для подключения к бд и выполняем запрос
         jdbcTemplate.update(sql, userRequest.getId(), userRequest.getName(), userRequest.getSurname(), userRequest.getEmail(), userRequest.getPhone(), userRequest.getBirthd());
 
         String sql2 = "INSERT INTO role (id, role) VALUES (?, ?)";
@@ -29,7 +31,7 @@ public class QueryController {
         return "User " + userRequest.getName() + " added successfully!";
     }
 
-    @PostMapping("/addBook")
+    @PostMapping("/addBook") //Все аналогично с методом выше
     public String addBook(@RequestBody UserRequest userRequest) {
         String sql = "INSERT INTO fullnameofbooks (namebooks, yearofpub) VALUES (?, ?)";
         jdbcTemplate.update(sql, userRequest.getNameofbooks(), userRequest.getYearofpub());
@@ -43,19 +45,19 @@ public class QueryController {
         return "Book " + userRequest.getNameofbooks() + " added successfully!";
     }
 
-    @GetMapping("/getUsers")
+    @GetMapping("/getUsers") //Помечаем что этот метод для Get'a и группируем все это в /getUsers
     public List<Map<String, Object>> getUsers() {
         String sql = "SELECT * FROM users";
         return jdbcTemplate.queryForList(sql);
     }
 
     @GetMapping("/getBooks")
-    public List<Map<String, Object>> getBooks() {
+    public List<Map<String, Object>> getBooks() { //Создать метод, который будет хранить в List'e Map нужно для того, чтобы корректно выводить данные из таблицы
         String sql = "SELECT * FROM fullnameofbooks";
         return jdbcTemplate.queryForList(sql);
     }
 
-    @DeleteMapping("/deleteUsers")
+    @DeleteMapping("/deleteUsers") //Почемаем что это для метода Delete и группируем это в /deleteUsers
     public String deleteUsers(@RequestBody UserRequest userRequest) {
         String sql = "DELETE FROM users WHERE id = ?";
         jdbcTemplate.update(sql, userRequest.getId());
